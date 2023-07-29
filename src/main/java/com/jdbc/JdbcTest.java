@@ -26,19 +26,18 @@ public class JdbcTest {
             myStmt = myConn.createStatement();
 
             // 3. Check employee information
-            System.out.println("BEFORE THE UPDATE...");
+            System.out.println("BEFORE THE DELETE...");
             displayEmployee(myConn, "John", "Doe");
 
             // 4. Executing the update
-            System.out.println("Updating an employee\n");
+            System.out.println("DELETING an employee\n");
             int rowsAffected = myStmt.executeUpdate(
-                "UPDATE employees " + 
-                "set email='johndoe1@gmail.com' " +
+                "DELETE FROM employees " + 
                 "WHERE last_name = 'Doe' and first_name = 'John'" 
                 );
 
             // 5. Check employee information
-            System.out.println("AFTER THE UPDATE...");
+            System.out.println("AFTER THE DELETE...");
             displayEmployee(myConn, "John", "Doe");
 
         } catch (Exception e) {
