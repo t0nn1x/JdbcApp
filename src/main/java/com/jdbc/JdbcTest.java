@@ -3,9 +3,9 @@ package com.jdbc;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.sql.CallableStatement;
 
 public class JdbcTest {
@@ -26,24 +26,45 @@ public class JdbcTest {
             String theDepartment = "Engineering";
 
             // 2. Prepare the stored procedure call
-            myStmt = myConn.prepareCall("{call get_count_for_department(?, ?)}");
+            myStmt = myConn.prepareCall("{call get_employees_for_department(?)}");
 
             // 3. Set the parameters
             myStmt.setString(1, theDepartment);
-            myStmt.registerOutParameter(2, Types.INTEGER);
 
             // 4. Call stored procedure
-            System.out.println("Calling stored procedure. get_count_for_department('" + theDepartment + "', ?)");
+            System.out.println("Calling stored procedure. get_employees_for_department('" + theDepartment + "')");
             myStmt.execute();
             System.out.println("Finishing calling stored procedure");
 
             // 6. Get the value of the OUT parameter
-            int theCount = myStmt.getInt(2);
-            System.out.println("\nThe count = " + theCount);
+            myRs = myStmt.getResultSet();
+
+            // 7. Display the result set
+            display(myRs);
+            
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             close(myConn, myStmt, myRs);
+        }
+    }
+
+    private static void display(ResultSet myRs) throws SQLException {
+        ResultSetMetaData rsmd = myRs.getMetaData();
+        int numColumns = rsmd.getColumnCount();
+
+        // Print the column names
+        for (int i = 1; i <= numColumns; i++) {
+            System.out.print(rsmd.getColumnName(i) + "\t");
+        }
+        System.out.println();
+
+        // Print the rows of the result set
+        while (myRs.next()) {
+            for (int i = 1; i <= numColumns; i++) {
+                System.out.print(myRs.getString(i) + "\t");
+            }
+            System.out.println();
         }
     }
 
