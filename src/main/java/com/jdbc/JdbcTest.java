@@ -26,21 +26,20 @@ public class JdbcTest {
             String theDepartment = "Engineering";
 
             // 2. Prepare the stored procedure call
-            myStmt = myConn.prepareCall("{call greet_the_department(?)}");
+            myStmt = myConn.prepareCall("{call get_count_for_department(?, ?)}");
 
             // 3. Set the parameters
-            myStmt.registerOutParameter(1, Types.VARCHAR);
             myStmt.setString(1, theDepartment);
+            myStmt.registerOutParameter(2, Types.INTEGER);
 
             // 4. Call stored procedure
-            System.out.println("Calling stored procdeure. greet_the_department('" + theDepartment + "')");
+            System.out.println("Calling stored procedure. get_count_for_department('" + theDepartment + "', ?)");
             myStmt.execute();
             System.out.println("Finishing calling stored procedure");
 
-            // 6. Get the value of INOUT parameter
-            String theResult = myStmt.getString(1);
-            System.out.println("\nThe result = " + theResult);
-
+            // 6. Get the value of the OUT parameter
+            int theCount = myStmt.getInt(2);
+            System.out.println("\nThe count = " + theCount);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
